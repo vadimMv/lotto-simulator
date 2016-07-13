@@ -13,12 +13,13 @@ namespace lotto_simulator
 
             // menu options function  called before starting game
             MenuOptions();
-          
+
         }
 
         /// <summary>
         /// playing in manual mode
         /// </summary>
+        /// <param name="rows">number rows</param>
         static void ManualGame(int rows)
         {
 
@@ -26,20 +27,20 @@ namespace lotto_simulator
             int[,] matrix = new int[rows, 7];   // results table  
             int[] column = new int[7];          // game array
             Random r = new Random();            // instanse random-object
-            
-            int[] winnerRow = RandomArrayPopulation(6, r,0);   // generating winer array 
-    
+
+            int[] winnerRow = RandomArrayPopulation(6, r, 0);   // generating winer array 
+
             Console.Clear();
-            
-            while (index != rows)              
+
+            while (index != rows)
             {
-                Console.WriteLine("Now you go to fill  "+(index+1)+"  row....");
+                Console.WriteLine("Now you go to fill  " + (index + 1) + "  row....");
                 column = ManualArrayPopulation(6);                      //  filling new row 
                 int e = CompareRows(winnerRow, column);                 //  comparing current row with winner-array and return number shots
                 CopyToTable(matrix, column, index, e);                  //  write results to table 
                 index++;                                                //  go to next row
             }
-            
+
             ViewResults(matrix, winnerRow);                             //  view game-results 
 
         }
@@ -47,6 +48,7 @@ namespace lotto_simulator
         /// <summary>
         /// playing automation mode 
         /// </summary>
+        /// <param name="rows">sending rows numbers</param>
         static void AutomaticGame(int rows)
         {
 
@@ -54,25 +56,25 @@ namespace lotto_simulator
             int[,] matrix = new int[rows, 7];       // results table 
             int[] column = new int[7];              // game array
             Random r = new Random();
-            int[] winnerRow = RandomArrayPopulation(6, r,0);     // winner array
-            Console.Clear();                                     
+            int[] winnerRow = RandomArrayPopulation(6, r, 0);     // winner array
+            Console.Clear();
             while (index != rows)
             {
-                column = RandomArrayPopulation(6, r,index+1);    // generete row
+                column = RandomArrayPopulation(6, r, index + 1);    // generete row
                 int e = CompareRows(winnerRow, column);          // compare to winner
                 CopyToTable(matrix, column, index, e);          //  copy to table
                 index++;                                        // next row
             }
 
             ViewResults(matrix, winnerRow);                   // print result
-            
+
         }
 
         /// <summary>
         /// comparing winner-row and current-row  couinting equals elements
         /// </summary>
-        /// <param name="winnerRow"></param>
-        /// <param name="column"></param>
+        /// <param name="winnerRow">array with winner shot</param>
+        /// <param name="column"> array with current row</param>
         private static int CompareRows(int[] winnerRow, int[] column)
         {
             int equvivalent = 0;
@@ -93,13 +95,13 @@ namespace lotto_simulator
         /// <summary>
         /// helper function for user input and screen  preparing
         /// </summary>
-        /// <param name="title"></param>
+        /// <param name="title"> title string</param>
 
         static int BeforeInput(string title)
         {
             Console.Clear();
             Console.Title = title;
-            Console.WriteLine("Click desirable amount columns , and press enter...");
+            Console.WriteLine("Click desirable amount rows , and press enter...");
             int rows = PromptForInt16();
             return rows;
         }
@@ -107,7 +109,9 @@ namespace lotto_simulator
         /// <summary>
         /// function for  random population 
         /// </summary>
-        /// <param name="SIZE"></param>
+        /// <param name="SIZE">size of current row</param>
+        /// <param name="ind">current-row index</param>
+        /// <param name="r">instance of random object</param>
         static int[] RandomArrayPopulation(int SIZE, Random r, int ind)
         {
 
@@ -144,7 +148,7 @@ namespace lotto_simulator
         /// <summary>
         /// function for manual lotto-input from user
         /// </summary>
-        /// <param name="SIZE"></param>
+        /// <param name="SIZE"> size of row </param>
         static int[] ManualArrayPopulation(int SIZE)
         {
 
@@ -161,7 +165,7 @@ namespace lotto_simulator
                     if (array[k] == beforeAdding)
                     {
                         Console.WriteLine("This number already exists , please try again...");
-                        Console.WriteLine("Current row " + String.Join(" ", array));        
+                        Console.WriteLine("Current row " + String.Join(" ", array));
                         i--;
                         break;
                     }
@@ -169,7 +173,7 @@ namespace lotto_simulator
                     {
                         array[i] = beforeAdding;
                         Console.WriteLine("Current row " + String.Join(" ", array));
-                  
+
 
                     }
                 }
@@ -182,7 +186,10 @@ namespace lotto_simulator
         /// <summary>
         /// copying all lotto-array to matrix
         /// </summary>
-        /// <param name="p"></param>
+        /// <param name="matrix">matrix with copied rows</param>
+        /// <param name="column">current row</param>
+        /// <param name="index">index of row</param>
+        /// <param name="e">number equivalent shots in row <param>
         /// <returns>2d array</returns>
         private static int[,] CopyToTable(int[,] matrix, int[] column, int index, int e)
         {
@@ -208,62 +215,80 @@ namespace lotto_simulator
         /// <summary>
         /// print table
         /// </summary>
-        /// <param name="matrix"></param>
+        /// <param name="matrix">matrix with game result</param>
         private static void PrintTable(int[,] matrix)
         {
-            int sixShots = 0, fiveShots = 0, fourShots = 0; 
+            int[] shots = new int[7];
             for (int i = 0; i < matrix.GetLength(0); i++)
             {
                 for (int j = 0; j < matrix.GetLength(1); j++)
                 {
                     if (j == 6)      // in cause j==6  anyway get number shots 
                     {
-                        Console.Write("|{0}|-The number shots column", matrix[i, j]);
+                        Console.Write("|{0}|-The number shots in row", matrix[i, j]);
 
-                        if(matrix[i,j]== 6 )
-                            sixShots++;         // count rows  with 6 shots
-                        
-                        else if(matrix[i,j]== 5 )
-                            fiveShots++;            // count rows  with 5 shots
-                        
+                        if (matrix[i, j] == 6)
+                            shots[6]++;         // count rows  with 6 shots
+
+                        else if (matrix[i, j] == 5)
+                            shots[5]++;            // count rows  with 5 shots
+
                         else if (matrix[i, j] == 4)
-                            fourShots++;                // count rows  with 4 shots
-                        
+                            shots[4]++;                // count rows  with 4 shots
 
+                        if (matrix[i, j] == 3)
+                            shots[3]++;         // count rows  with 3 shots
+
+                        else if (matrix[i, j] == 2)
+                            shots[2]++;            // count rows  with 2 shots
+
+                        else if (matrix[i, j] == 1)
+                            shots[1]++;                // count rows  with 1 shots
+
+                        else if (matrix[i, j] == 0)
+                            shots[0]++;                // count rows  with 0 shots
                     }
                     else
                         Console.Write("{0,4} ", matrix[i, j]);
                 }
                 Console.WriteLine();
             }
-            
-            Console.WriteLine("Number rows with six shots " + sixShots);
-            Console.WriteLine("Number rows with five shots " + fiveShots);
-            Console.WriteLine("Number rows with four shots " + fourShots);
+            Console.WriteLine();
+            Console.WriteLine("Number rows with six shots  {0}", shots[6]);
+            Console.WriteLine("Number rows with five shots {0}", shots[5]);
+            Console.WriteLine("Number rows with four shots {0}", shots[4]);
+            Console.WriteLine("Number rows with free shots {0}", shots[3]);
+            Console.WriteLine("Number rows with two shots  {0}", shots[2]);
+            Console.WriteLine("Number rows with one shots  {0}", shots[1]);
+            Console.WriteLine("Number rows with zero shots {0}", shots[0]);
+            Console.WriteLine();
             Console.WriteLine("Press any key to continue....\n" + "Thanks You!!!!");
+            Console.WriteLine();
             Console.ReadKey();
             MenuOptions();     // re-calling menu  
         }
         /// <summary>
         /// End result view function, called after automation/manual game 
         /// </summary>
-        /// <param name="matrix"></param>
-        /// <param name="winner"></param>
-        private static void ViewResults(int[,] matrix, int[] winner) {
+        /// <param name="matrix">game result</param>
+        /// <param name="winner">winner row</param>
+        private static void ViewResults(int[,] matrix, int[] winner)
+        {
 
             Console.WriteLine("Press any key  and see results.....");
+            Console.WriteLine();
             Console.ReadKey();
             Console.Clear();
             Console.WriteLine();
-            Console.WriteLine("Is winner row: "+String.Join(" ",winner)); // printing winner-row
+            Console.WriteLine("Is winner row: " + String.Join(" ", winner)); // printing winner-row
             Console.WriteLine("You  results....");
             Console.WriteLine();
             PrintTable(matrix);     // printing table with user results
         }
-          /// <summary>
-          /// input validation function
-          /// </summary>
-          /// <returns></returns>
+        /// <summary>
+        /// input validation function
+        /// </summary>
+        /// <returns></returns>
         static int PromptForInt16()
         {
             while (true)
@@ -295,13 +320,13 @@ namespace lotto_simulator
             Console.WriteLine("    3. Exit.");
             Console.WriteLine();
             Console.WriteLine("Choose appropriate , and press enter......");
-           
+
             choose = PromptForInt16();   // call validation function
 
             while (choose != 1 && choose != 3 && choose != 2)           //  additional checking
             {                                                           //  for menu items choose
                 Console.WriteLine("You can choose 1 2 3 menu items....");
-                choose = PromptForInt16();   
+                choose = PromptForInt16();
             }
 
             switch (choose)
